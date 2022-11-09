@@ -161,7 +161,19 @@ module.exports = {
       }
 
       try {
-        await command.run(client, interaction, prefix);
+          await command.run(client, interaction, prefix);
+          const logsChannel = client.channels.cache.get(client.config.logs);
+          const embed = new EmbedBuilder()
+              .setThumbnail(interaction.guild.iconURL({ size: 1024 }))
+              .setTitle(`📜 Command Used`)
+              .addFields([
+                  { name: 'User', value: `\`${interaction.user.username}\`` },
+                  { name: 'ID', value: `\`${interaction.user.id}\`` },
+                  { name: 'Guild', value: `${interaction.guild.name} | ${interaction.guild.id}` },
+                  { name: 'Command', value: interaction.commandName },
+              ])
+              .setTimestamp();
+          logsChannel.send({ embeds: [embed] });
       } catch (error) {
         if (interaction.replied) {
           await interaction
